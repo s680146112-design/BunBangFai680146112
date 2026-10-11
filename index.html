@@ -1,0 +1,831 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>ประเพณีบุญบั้งไฟ (Bun Bang Fai Festival) - สืบสานวัฒนธรรมอีสาน</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Prompt & Sarabun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        isarn: {
+                            gold: '#F59E0B',
+                            goldlight: '#FBBF24',
+                            red: '#DC2626',
+                            reddark: '#991B1B',
+                            orange: '#EA580C',
+                            dark: '#14100E',
+                            cream: '#FFFBEB',
+                        }
+                    },
+                    fontFamily: {
+                        prompt: ['Prompt', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #120E0C;
+            color: #292524;
+            position: relative;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6, .font-prompt {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        /* Canvas สำหรับวาดบั้งไฟ ประกายไฟ ละอองเมาส์ และควัน */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* คอนเทนต์เลเยอร์ให้อยู่เหนือ Canvas */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* พื้นหลังลายไทยแบบโปร่งแสง */
+        .thai-pattern-bg {
+  background-color: rgba(253, 248, 236, 0.25) !important; /* ปรับระดับความโปร่งแสงของสีพื้นหลังครีม */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FBBF24 0%, #EA580C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(18, 14, 12, 0.75), rgba(153, 27, 27, 0.85)), url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* กล่องเนื้อหาโทนสว่าง อ่านง่าย ชัดเจน เพิ่มการเบลอฉากหลังนิดๆ ให้ประกายไฟส่องผ่านเนียนๆ */
+        .section-card-bg {
+            background-color: rgba(255, 251, 235, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-isarn-gold selection:text-white">
+
+    <!-- Canvas แสดงผลเอฟเฟกต์หลังฉาก -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="content-layer">
+        <!-- Header / Navigation -->
+        <header class="sticky top-0 z-50 bg-isarn-dark/90 backdrop-blur-md border-b border-isarn-gold/30 text-white shadow-xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <a href="#" class="flex items-center space-x-3 group">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-isarn-red to-isarn-gold flex items-center justify-center text-white text-2xl shadow-md transform group-hover:scale-105 transition">
+                            <i class="fa-solid font-bold fa-fire-flame-curved text-yellow-300"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-bold font-prompt tracking-wide text-isarn-goldlight block">บุญบั้งไฟ</span>
+                            <span class="text-xs text-gray-300 block tracking-widest uppercase">Bun Bang Fai</span>
+                        </div>
+                    </a>
+
+                    <nav class="hidden md:flex space-x-6 text-sm font-medium font-prompt">
+                        <a href="#history" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">ประวัติความเป็นมา</a>
+                        <a href="#legend" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">ตำนานพญาแถน</a>
+                        <a href="#highlights" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">กิจกรรมในงาน</a>
+                        <a href="#types" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">ประเภทบั้งไฟ</a>
+                        <a href="#gallery" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">ภาพบรรยากาศ</a>
+                        <a href="#quiz" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">เกมตอบคำถาม</a>
+                        <a href="#faq" class="hover:text-isarn-goldlight transition py-2 border-b-2 border-transparent hover:border-isarn-gold">FAQ</a>
+                    </nav>
+
+                    <div class="md:hidden">
+                        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" type="button" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mobile-menu" class="hidden md:hidden bg-isarn-dark border-b border-isarn-gold/20 px-4 pt-2 pb-4 space-y-2 font-prompt text-base">
+                <a href="#history" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">ประวัติความเป็นมา</a>
+                <a href="#legend" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">ตำนานพญาแถน</a>
+                <a href="#highlights" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">กิจกรรมในงาน</a>
+                <a href="#types" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">ประเภทบั้งไฟ</a>
+                <a href="#gallery" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">ภาพบรรยากาศ</a>
+                <a href="#quiz" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">เกมตอบคำถาม</a>
+                <a href="#faq" class="block py-2 px-3 rounded hover:bg-isarn-reddark text-gray-200">FAQ</a>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="relative hero-bg min-h-[85vh] flex items-center justify-center text-center text-white px-4 py-20">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#120E0C] via-transparent to-black/50"></div>
+            <div class="relative z-10 max-w-4xl mx-auto space-y-6">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-isarn-gold/20 border border-isarn-gold/50 text-isarn-goldlight text-sm font-semibold tracking-wide uppercase mb-2">
+                    ✨ มรดกวัฒนธรรมอันยิ่งใหญ่แห่งภาคอีสาน ✨
+                </div>
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold font-prompt tracking-tight leading-tight">
+                    ประเพณี <span class="gold-gradient-text drop-shadow-md">บุญบั้งไฟ</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed">
+                    "จุดบั้งไฟขึ้นฟ้า บูชาพญาแถน ขอฝนตกตามฤดูกาล เสริมความสมบูรณ์พูนสุขแก่แผ่นดิน"
+                </p>
+                <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#history" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-isarn-gold to-isarn-orange text-stone-900 font-bold font-prompt text-lg shadow-lg hover:shadow-isarn-gold/50 hover:scale-105 transition transform">
+                        <i class="fa-solid fa-book-open mr-2"></i> สำรวจเรื่องราวประเพณี
+                    </a>
+                    <a href="#quiz" class="w-full sm:w-auto px-8 py-4 rounded-full bg-isarn-reddark/80 hover:bg-isarn-red text-white font-bold font-prompt text-lg border border-isarn-gold/40 shadow-lg hover:scale-105 transition transform">
+                        <i class="fa-solid fa-gamepad mr-2"></i> เล่นมินิเกมตอบคำถาม
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto my-8 rounded-3xl section-card-bg border border-amber-200/60">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-isarn-orange font-bold font-prompt text-lg tracking-wider uppercase">Background</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-stone-900 mt-2">ประวัติความเป็นมา</h2>
+                <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <div class="absolute -top-4 -left-4 w-full h-full border-2 border-isarn-gold rounded-2xl transform -rotate-1"></div>
+                    <img src="https://lh3.googleusercontent.com/d/108xomKAf3dCo8RoYo029zbIUCInixTP4" alt="บรรยากาศบุญบั้งไฟ" class="relative z-10 rounded-2xl shadow-xl w-full h-96 object-cover" onerror="this.src='https://placehold.co/800x600/991b1b/ffffff?text=Bun+Bang+Fai'">
+                </div>
+                <div class="space-y-6 text-stone-800 text-lg leading-relaxed">
+                    <p>
+                        <strong class="text-isarn-reddark text-xl font-prompt">ประเพณีบุญบั้งไฟ</strong> เป็นประเพณีสำคัญของชาวภาคอีสาน รวมถึงชาวลาว จัดขึ้นในเดือนหก (ราวเดือนพฤษภาคม) ของทุกปี ซึ่งเป็นช่วงก่อนเริ่มฤดูทำนาปี เพื่อเป็นการบูชา <span class="text-isarn-orange font-semibold">"พญาแถน"</span> เทพยดาผู้ดลบันดาลให้ฝนตกตามฤดูกาล
+                    </p>
+                    <p>
+                        ชาวบ้านเชื่อว่า หากไม่มีการจัดงานบุญบั้งไฟ อาจเกิดภัยแล้ง ฝนฟ้าไม่ตกตามฤดูกาล พืชผลเสียหาย เกิดโรคระบาด ดังนั้นการจุดบั้งไฟจึงเป็นการส่งสัญญาณบอกกล่าวให้พญาแถนส่งฝนลงมายังโลกมนุษย์ เพื่อความอุดมสมบูรณ์ในการทำเกษตรกรรม
+                    </p>
+                    <div class="p-4 rounded-xl bg-amber-100/90 border-l-4 border-isarn-gold flex items-start space-x-3 shadow-sm">
+                        <i class="fa-solid fa-quote-left text-isarn-orange text-2xl mt-1"></i>
+                        <p class="text-sm text-stone-800 italic">
+                            บุญบั้งไฟมิใช่เพียงการจุดดอกไม้ไฟเพื่อความสนุกสนาน แต่เป็นศูนย์รวมความศรัทธา ความสามัคคี และมรดกทางภูมิปัญญาของชุมชนอีสานที่สืบทอดกันมาอย่างยาวนาน
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legend Section -->
+        <section id="legend" class="py-20 thai-pattern-bg text-white rounded-3xl my-8 max-w-7xl mx-auto border border-isarn-gold/30 shadow-2xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-isarn-goldlight font-bold font-prompt text-lg tracking-wider uppercase">Folklore & Myth</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-white mt-2">ตำนานพญาแถนและพญาคันคาก</h2>
+                    <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-stone-900/90 border border-isarn-gold/30 rounded-2xl p-6 shadow-xl hover:border-isarn-gold transition duration-300">
+                        <div class="w-14 h-14 rounded-full bg-isarn-red/20 border border-isarn-red flex items-center justify-center text-isarn-gold text-2xl mb-6">
+                            <i class="fa-solid fa-cloud-sun-rain"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-prompt text-isarn-goldlight mb-3">1. สงครามหยุดฝน</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            พญาแถนผู้เป็นใหญ่ในเมืองฟ้า โกรธมนุษย์ที่ไม่บูชา จึงกักเก็บฝนไว้ไม่ให้ตกส่องลงมายังโลกมนุษย์เป็นเวลานานถึง 7 ปี 7 เดือน 7 วัน ทำให้โลกมนุษย์แห้งแล้ง ต้นไม้เหี่ยวเฉา สิ่งมีชีวิตเดือดร้อนหนัก
+                        </p>
+                    </div>
+
+                    <div class="bg-stone-900/90 border border-isarn-gold/30 rounded-2xl p-6 shadow-xl hover:border-isarn-gold transition duration-300">
+                        <div class="w-14 h-14 rounded-full bg-isarn-orange/20 border border-isarn-orange flex items-center justify-center text-isarn-gold text-2xl mb-6">
+                            <i class="fa-solid fa-frog"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-prompt text-isarn-goldlight mb-3">2. พญาคันคากรวบรวมกำลัง</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            "พญาคันคาก" (คางคก) นำทัพสัตว์น้อยใหญ่ทั้ง มด ปลวก มอด รวบรวมกำลังขึ้นไปทำสู้รบกับพญาแถนบนสวรรค์ จนสามารถเอาชนะพญาแถนได้สำเร็จในที่สุด
+                        </p>
+                    </div>
+
+                    <div class="bg-stone-900/90 border border-isarn-gold/30 rounded-2xl p-6 shadow-xl hover:border-isarn-gold transition duration-300">
+                        <div class="w-14 h-14 rounded-full bg-isarn-gold/20 border border-isarn-gold flex items-center justify-center text-isarn-gold text-2xl mb-6">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-prompt text-isarn-goldlight mb-3">3. พันธสัญญาบั้งไฟ</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            เกิดสัญญาสงบศึก โดยมนุษย์จะทำ "บั้งไฟ" จุดขึ้นฟ้าเพื่อส่งสัญญาณเตือนว่าถึงฤดูทำนาแล้ว ให้พญาแถนปล่อยฝนลงมา และกบ/คางคกจะร้องส่งเสียงตอบรับเมื่อฝนตก
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Festival Highlights -->
+        <section id="highlights" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto my-8 rounded-3xl section-card-bg border border-amber-200/60">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-isarn-orange font-bold font-prompt text-lg tracking-wider uppercase">Activities</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-stone-900 mt-2">กิจกรรมไฮไลท์ในงาน</h2>
+                <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-200 hover:shadow-xl transition group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://lh3.googleusercontent.com/d/1dfb_GUaOCF_EIFbl2_b0QUybWa9jjsbP" alt="ขบวนแห่บั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/500x350/ea580c/ffffff?text=Parade'">
+                        <span class="absolute top-3 left-3 bg-isarn-red text-white text-xs font-bold font-prompt px-3 py-1 rounded-full">วันแรก</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold font-prompt text-xl text-stone-800 mb-2">ขบวนแห่บั้งไฟสวยงาม</h3>
+                        <p class="text-stone-600 text-sm">การประกวดขบวนแห่บั้งไฟเอ้ (บั้งไฟประดับลายไทย) ที่ตระการตาและประณีตพร้อมขบวนบรรดาช่างรำ</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-200 hover:shadow-xl transition group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://lh3.googleusercontent.com/d/1TTODG_7hMkXMO6cnajx8IuQjuGa923pt" alt="การรำเซิ้งบั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/500x350/f59e0b/ffffff?text=Serng+Dance'">
+                        <span class="absolute top-3 left-3 bg-isarn-gold text-stone-900 text-xs font-bold font-prompt px-3 py-1 rounded-full">การแสดง</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold font-prompt text-xl text-stone-800 mb-2">การรำเซิ้งบั้งไฟ</h3>
+                        <p class="text-stone-600 text-sm">ขบวนรำเซิ้งประกอบเสียงกลองยาวและจังหวะดนตรีอีสานที่สนุกสนาน มีเนื้อร้องหยอกล้อและขอฝนอย่างครึกครื้น</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-200 hover:shadow-xl transition group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://lh3.googleusercontent.com/d/1euSK3mRfWB_wcD_eLESmZW51n2eBaohC" alt="การแข่งขันจุดบั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/500x350/991b1b/ffffff?text=Rocket+Launch'">
+                        <span class="absolute top-3 left-3 bg-isarn-reddark text-white text-xs font-bold font-prompt px-3 py-1 rounded-full">วันจุดแข่งขัน</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold font-prompt text-xl text-stone-800 mb-2">การแข่งขันจุดบั้งไฟ</h3>
+                        <p class="text-stone-600 text-sm">การจุดบั้งไฟขึ้นสู่ท้องฟ้าเพื่อวัดความสูงและระยะเวลาลอยอยู่ในอากาศ ค่ายไหนตกก่อนถือว่าแพ้</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-amber-200 hover:shadow-xl transition group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://lh3.googleusercontent.com/d/1H_BDfN-Cctdtju6faItEnnUm3D4owF1U" alt="การประกวดธิดาบั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/500x350/ea580c/ffffff?text=Beauty+Pageant'">
+                        <span class="absolute top-3 left-3 bg-isarn-orange text-white text-xs font-bold font-prompt px-3 py-1 rounded-full">การประกวด</span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold font-prompt text-xl text-stone-800 mb-2">ประกวดธิดาบั้งไฟโก้</h3>
+                        <p class="text-stone-600 text-sm">เวทีแสดงความงามและความสามารถของสาวงามประจำท้องถิ่น ในชุดแต่งกายไทยอีสานโบราณอันสวยงาม</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Types of Bang Fai Section -->
+        <section id="types" class="py-20 max-w-7xl mx-auto my-8 rounded-3xl section-card-bg border border-amber-200/60 shadow-2xl">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-isarn-reddark font-bold font-prompt text-lg tracking-wider uppercase">Classification</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-stone-900 mt-2">ประเภทของบั้งไฟ</h2>
+                    <p class="text-stone-600 mt-2">แบ่งตามขนาดและน้ำหนักของดินปืนที่บรรจุอยู่ภายในตัวบั้งไฟ</p>
+                    <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow border-t-4 border-emerald-500 relative">
+                        <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">บั้งไฟขนาดเล็ก</div>
+                        <h3 class="text-2xl font-bold font-prompt text-stone-800 mb-3">บั้งไฟน้อย</h3>
+                        <p class="text-stone-600 text-sm mb-4">ใช้น้ำหนักดินประสิวไม่เกิน 12 กิโลกรัม จุดเพื่อเสี่ยงทายดูโชคชะตา หรือประกอบพิธีกรรมขนาดเล็ก</p>
+                        <span class="inline-block text-xs font-semibold px-3 py-1 rounded bg-emerald-100 text-emerald-800">น้ำหนัก &lt; 12 กก.</span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow border-t-4 border-isarn-gold relative">
+                        <div class="text-xs font-bold text-isarn-goldlight uppercase tracking-wider mb-1">บั้งไฟขนาดกลาง</div>
+                        <h3 class="text-2xl font-bold font-prompt text-stone-800 mb-3">บั้งไฟหมื่น</h3>
+                        <p class="text-stone-600 text-sm mb-4">บรรจุดินปืนหนัก 12 กิโลกรัม (1 หมื่นตามมาตราวัดโบราณ) เป็นขนาดมาตรฐานที่นิยมแข่งขันตามหมู่บ้าน</p>
+                        <span class="inline-block text-xs font-semibold px-3 py-1 rounded bg-amber-100 text-amber-800">น้ำหนัก 12 กก. (1 หมื่น)</span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow border-t-4 border-isarn-orange relative">
+                        <div class="text-xs font-bold text-isarn-orange uppercase tracking-wider mb-1">บั้งไฟขนาดใหญ่</div>
+                        <h3 class="text-2xl font-bold font-prompt text-stone-800 mb-3">บั้งไฟแสน</h3>
+                        <p class="text-stone-600 text-sm mb-4">บรรจุดินปืนหนัก 120 กิโลกรัม (10 หมื่น หรือ 1 แสน) ทะยานขึ้นฟ้าได้สูงมาก ต้องใช้ช่างผู้เชี่ยวชาญทำ</p>
+                        <span class="inline-block text-xs font-semibold px-3 py-1 rounded bg-orange-100 text-orange-800">น้ำหนัก 120 กก. (1 แสน)</span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow border-t-4 border-isarn-red relative">
+                        <div class="text-xs font-bold text-isarn-red uppercase tracking-wider mb-1">บั้งไฟขนาดใหญ่พิเศษ</div>
+                        <h3 class="text-2xl font-bold font-prompt text-stone-800 mb-3">บั้งไฟล้าน</h3>
+                        <p class="text-stone-600 text-sm mb-4">บรรจุดินปืนถึง 1,200 กิโลกรัม (1 ล้าน) มีพลังทำลายล้างและเสียงดังสนั่น ใช้ทักษะวิศวกรรมพื้นบ้านระดับสูง</p>
+                        <span class="inline-block text-xs font-semibold px-3 py-1 rounded bg-red-100 text-red-800">น้ำหนัก 1,200 กก. (1 ล้าน)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto my-8 rounded-3xl section-card-bg shadow-2xl border border-amber-200/60">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-isarn-orange font-bold font-prompt text-lg tracking-wider uppercase">Visuals</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-stone-900 mt-2">ภาพบรรยากาศงานประเพณี</h2>
+                <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/1pBmilqvidztq9hbiG93l2_Tfuk1WdZC8" alt="บั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/1c1917/ffffff?text=Bang+Fai+1'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">ฐานจุดบั้งไฟพุ่งทะยานสู่ท้องฟ้า</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/13a4VpKcuNqjwss6jVQuthaGgEJFpgnSt" alt="รำเซิ้ง" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/991b1b/ffffff?text=Bang+Fai+2'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">การแต่งกายเครื่องนครอีสานร่วมรำเซิ้ง</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/1ptJIXWhjrtrC3h58URk7xdU5Z97WNPpa" alt="ควันบั้งไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/ea580c/ffffff?text=Bang+Fai+3'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">กลุ่มควันขาวขณะบั้งไฟถูกจุดทะลุชั้นเมฆ</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/1U3BUQlZ9yW0JpGA9nnANmcL2StE6p8x7" alt="บั้งไฟเอ้" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/f59e0b/ffffff?text=Bang+Fai+4'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">ลายไทยประดิดประดอยบนบั้งไฟเอ้</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/1kDxqEmPjj5v_it_QoOKZeypgtm8VPV9h" alt="การเฉลิมฉลอง" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/1c1917/ffffff?text=Bang+Fai+5'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">ความสนุกสนานของชาวบ้านและนักท่องเที่ยว</p>
+                    </div>
+                </div>
+                <div class="relative overflow-hidden rounded-xl h-64 group">
+                    <img src="https://lh3.googleusercontent.com/d/1XB1qUiqMzRRb-I-q8LuG4nSdQA1QmKfK" alt="การจุดไฟ" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/600x400/991b1b/ffffff?text=Bang+Fai+6'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                        <p class="text-white font-prompt text-sm">พิธีการจุดบั้งไฟขอฝนอย่างเป็นทางการ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Quiz Section -->
+        <section id="quiz" class="py-20 thai-pattern-bg text-white my-8 max-w-7xl mx-auto rounded-3xl border border-isarn-gold/40 shadow-2xl">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <span class="text-isarn-goldlight font-bold font-prompt text-lg tracking-wider uppercase">Interactive Quiz</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-white mt-2">ทดสอบความรู้ประเพณีบุญบั้งไฟ</h2>
+                    <p class="text-gray-300 mt-2">มาดูกันว่าคุณรู้จักบุญบั้งไฟดีแค่ไหน!</p>
+                    <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="bg-stone-900 border border-isarn-gold/40 rounded-3xl p-6 sm:p-10 shadow-2xl">
+                    <div id="quiz-container">
+                        <div id="quiz-header" class="flex justify-between items-center mb-6 pb-4 border-b border-stone-800">
+                            <span id="question-number" class="text-isarn-gold font-prompt font-semibold">ข้อที่ 1 จาก 4</span>
+                            <span id="quiz-score" class="text-sm bg-isarn-reddark text-white px-3 py-1 rounded-full">คะแนน: 0</span>
+                        </div>
+
+                        <div id="question-text" class="text-xl font-prompt font-medium mb-6 text-stone-100 leading-relaxed"></div>
+
+                        <div id="options-container" class="space-y-3"></div>
+
+                        <div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden font-prompt"></div>
+
+                        <div class="mt-8 flex justify-end">
+                            <button id="next-btn" onclick="nextQuestion()" class="hidden px-6 py-3 rounded-full bg-gradient-to-r from-isarn-gold to-isarn-orange text-stone-900 font-bold font-prompt hover:scale-105 transition">
+                                ข้อถัดไป <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="result-container" class="hidden text-center py-8">
+                        <div class="w-20 h-20 bg-isarn-gold/20 border-2 border-isarn-gold rounded-full flex items-center justify-center mx-auto mb-4 text-isarn-gold text-4xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold font-prompt text-isarn-goldlight mb-2">สรุปผลการทดสอบ</h3>
+                        <p id="result-text" class="text-xl text-gray-200 mb-6">คุณได้คะแนน 0 จาก 4 คะแนน</p>
+                        <p id="result-comment" class="text-stone-300 mb-8 max-w-md mx-auto"></p>
+                        <button onclick="resetQuiz()" class="px-8 py-3 rounded-full bg-isarn-red hover:bg-isarn-reddark text-white font-bold font-prompt shadow-lg hover:scale-105 transition">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> เล่นใหม่อีกครั้ง
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto my-8 rounded-3xl section-card-bg shadow-2xl border border-amber-200/60">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-isarn-orange font-bold font-prompt text-lg tracking-wider uppercase">Questions</span>
+                <h2 class="text-3xl sm:text-4xl font-bold font-prompt text-stone-900 mt-2">คำถามที่พบบ่อย (FAQ)</h2>
+                <div class="w-24 h-1.5 bg-gradient-to-r from-isarn-gold to-isarn-red mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="border border-amber-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 text-left font-bold font-prompt text-stone-800 flex justify-between items-center focus:outline-none hover:bg-amber-50">
+                        <span>1. งานประเพณีบุญบั้งไฟมักจัดขึ้นในช่วงเดือนไหนของปี?</span>
+                        <i id="faq-icon-1" class="fa-solid fa-chevron-down text-isarn-orange transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-1" class="hidden px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-amber-100 pt-3">
+                        โดยทั่วไปจะจัดขึ้นในเดือนหกตาม ปฏิทินจันทรคติไทย ซึ่งมักจะตรงกับช่วงเดือนพฤษภาคมของทุกปี ก่อนที่จะเริ่มเข้าสู่ฤดูทำนา
+                    </div>
+                </div>
+
+                <div class="border border-amber-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 text-left font-bold font-prompt text-stone-800 flex justify-between items-center focus:outline-none hover:bg-amber-50">
+                        <span>2. จังหวัดที่มีชื่อเสียงที่สุดในการจัดงานบุญบั้งไฟคือจังหวัดใด?</span>
+                        <i id="faq-icon-2" class="fa-solid fa-chevron-down text-isarn-orange transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-2" class="hidden px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-amber-100 pt-3">
+                        จังหวัดยโสธร เป็นจังหวัดที่มีชื่อเสียงโด่งดังที่สุดทั้งในประเทศและต่างประเทศ โดยจัดงานอย่างยิ่งใหญ่บริเวณสวนสาธารณะพญาแถน
+                    </div>
+                </div>
+
+                <div class="border border-amber-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 text-left font-bold font-prompt text-stone-800 flex justify-between items-center focus:outline-none hover:bg-amber-50">
+                        <span>3. หากบั้งไฟจุดแล้วไม่ขึ้น หรือระเบิด (ตกรอบ) จะเกิดอะไรขึ้น?</span>
+                        <i id="faq-icon-3" class="fa-solid fa-chevron-down text-isarn-orange transition-transform duration-300"></i>
+                    </button>
+                    <div id="faq-answer-3" class="hidden px-5 pb-5 text-stone-600 text-sm leading-relaxed border-t border-amber-100 pt-3">
+                        ตามธรรมเนียมโบราณ หากบั้งไฟค่ายใดจุดไม่ขึ้นหรือระเบิด ช่างทำบั้งไฟหรือนายช่างประจำค่ายนั้นจะถูกจับโยนลงโคลนตม เพื่อความสนุกสนานและแก้เคล็ด
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-isarn-dark text-stone-400 py-12 border-t border-isarn-gold/20 font-prompt">
+            <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+                <div class="flex items-center justify-center space-x-2 text-isarn-gold">
+                    <i class="fa-solid fa-fire-flame-curved"></i>
+                    <span class="text-xl font-bold font-prompt text-isarn-goldlight"> บุญบั้งไฟ Isarn Culture </span>
+                </div>
+                <p class="text-sm text-stone-500">
+                    ร่วมสืบสานและอนุรักษ์ประเพณีอันทรงคุณค่าของชาวไทยอีสาน ให้คงอยู่คู่สังคมไทยตลอดไป
+                </p>
+                <p class="pt-4 text-xs text-stone-500 border-t border-stone-800">
+                                   &copy; เว็บไซต์นี้จัดทำขึ้นเพื่อการศึกษาและส่งเสริมมรดกวัฒนธรรมไทย ประเพณีบุญบั้งไฟ
+				   <p> นาย กัณตภัทร เมธาวาริศกุล รหัสนักศึกษา 680146 
+				   </p>
+				     <p> มหาวิทยาลัยเจ้าพระยา คณะบริหารและการจัดการ สาขาคอมพิวเตอร์ธุรกิจ
+					 </p>
+
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script สำหรับ Canvas ควบคุมเอฟเฟกต์บั้งไฟ ควัน ประกายไฟ และลูกเล่นเมาส์ -->
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleFaq(id) {
+            const answer = document.getElementById(`faq-answer-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            answer.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // ================= CANVAS ANIMATION ENGINE =================
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 1. คลาสบั้งไฟ (Rocket / Bang Fai Fire Tail)
+        class BangFai {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 200;
+                this.speedY = Math.random() * 3 + 2.5; // ความเร็วพุ่งขึ้น
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.length = Math.random() * 30 + 20; // ความยาวตัวบั้งไฟ
+                this.width = Math.random() * 2.5 + 2;
+                this.opacity = Math.random() * 0.8 + 0.2;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX + Math.sin(this.y * 0.02) * 0.4; // ลอยพริ้วๆ
+
+                // ปล่อยควันและประกายไฟตามหลัง
+                if (Math.random() < 0.6) {
+                    smokes.push(new Smoke(this.x, this.y + this.length));
+                }
+                if (Math.random() < 0.7) {
+                    sparks.push(new Spark(this.x, this.y + this.length, false));
+                }
+
+                if (this.y < -50) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                
+                // วาดตัวหางไฟเรืองแสงส้ม-ทอง
+                const grad = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.length);
+                grad.addColorStop(0, '#FFFFFF');
+                grad.addColorStop(0.2, '#FBBF24');
+                grad.addColorStop(0.6, '#EA580C');
+                grad.addColorStop(1, 'transparent');
+
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = this.width;
+                ctx.lineCap = 'round';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#F59E0B';
+
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.speedX * 5, this.y + this.length);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // 2. คลาสกลุ่มควันสีขาวเทา (White-Gray Smoke)
+        class Smoke {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 6;
+                this.y = y;
+                this.size = Math.random() * 12 + 6;
+                this.speedY = Math.random() * 0.5 + 0.2;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.25 + 0.1;
+                this.growth = Math.random() * 0.3 + 0.15;
+            }
+
+            update() {
+                this.y += this.speedY; // ควันลอยตามหลังลงนิดๆ แล้วขยายตัว
+                this.x += this.speedX;
+                this.size += this.growth;
+                this.opacity -= 0.003;
+            }
+
+            draw() {
+                if (this.opacity <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                grad.addColorStop(0, 'rgba(220, 220, 225, 0.4)');
+                grad.addColorStop(0.7, 'rgba(160, 160, 165, 0.15)');
+                grad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 3. คลาสประกายไฟเรืองแสง (Spark Particles / Mouse Sparks)
+        class Spark {
+            constructor(x, y, isMouse = false, vx = null, vy = null) {
+                this.x = x;
+                this.y = y;
+                this.size = isMouse ? Math.random() * 3.5 + 1.5 : Math.random() * 2.5 + 1;
+                this.speedX = vx !== null ? vx : (Math.random() - 0.5) * (isMouse ? 3.5 : 1.2);
+                this.speedY = vy !== null ? vy : isMouse ? (Math.random() - 0.5) * 3.5 : Math.random() * 1.5 + 0.5;
+                this.opacity = 1;
+                this.fade = isMouse ? Math.random() * 0.03 + 0.015 : Math.random() * 0.02 + 0.008;
+                
+                const colors = ['#FFF59D', '#FBBF24', '#F59E0B', '#EA580C', '#FF3D00'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.opacity -= this.fade;
+            }
+
+            draw() {
+                if (this.opacity <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // ตัวแปรเก็บ Object ต่างๆ
+        const bangfais = [];
+        const smokes = [];
+        const sparks = [];
+
+        // สร้างบั้งไฟจำลองประจำหน้าจอ 12 ตัว
+        for (let i = 0; i < 12; i++) {
+            bangfais.push(new BangFai());
+        }
+
+        // ---------- ระบบตอบสนองเมาส์ (Mouse Interactivity) ----------
+        window.addEventListener('mousemove', (e) => {
+            // สร้างละอองไฟระยิบระยับตามรอยเมาส์เคลื่อนไหว
+            for (let i = 0; i < 2; i++) {
+                sparks.push(new Spark(e.clientX, e.clientY, true));
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            // คลิกเมาส์แล้วจุดประกายไฟพุ่งกระจายสวยงาม
+            for (let i = 0; i < 25; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 1;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed;
+                sparks.push(new Spark(e.clientX, e.clientY, true, vx, vy));
+            }
+            // ปล่อยควันตรงจุดคลิก
+            for (let i = 0; i < 5; i++) {
+                smokes.push(new Smoke(e.clientX, e.clientY));
+            }
+        });
+
+        // Loop แสดงผลอนิเมชันตลอดเวลา
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // อัปเดตและวาดควัน
+            for (let i = smokes.length - 1; i >= 0; i--) {
+                smokes[i].update();
+                smokes[i].draw();
+                if (smokes[i].opacity <= 0) smokes.splice(i, 1);
+            }
+
+            // อัปเดตและวาดบั้งไฟ
+            bangfais.forEach(bf => {
+                bf.update();
+                bf.draw();
+            });
+
+            // อัปเดตและวาดประกายไฟ
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                sparks[i].update();
+                sparks[i].draw();
+                if (sparks[i].opacity <= 0) sparks.splice(i, 1);
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ================= QUIZ ENGINE =================
+        const quizData = [
+            {
+                question: "ประเพณีบุญบั้งไฟจัดขึ้นเพื่อวัตถุประสงค์หลักใด?",
+                options: [
+                    "เพื่อเฉลิมฉลองวันขึ้นปีใหม่ไทย",
+                    "เพื่อบูชาพญาแถนขอฝนตามฤดูกาล",
+                    "เพื่อแข่งขันกีฬาความเร็ว",
+                    "เพื่อสงเคราะห์ผู้ยากไร้ในหมู่บ้าน"
+                ],
+                correct: 1
+            },
+            {
+                question: "จังหวัดที่มีชื่อเสียงที่สุดในการจัดงานบุญบั้งไฟคือจังหวัดใด?",
+                options: ["ขอนแก่น", "อุบลราชธานี", "ยโสธร", "เชียงใหม่"],
+                correct: 2
+            },
+            {
+                question: "หากจุดบั้งไฟไม่ขึ้น หรือตกโคลน (ตกรอบ) จะมีบทลงโทษอย่างไร?",
+                options: ["ปรับเงินค่ายบั้งไฟ", "ถูกจับโยนลงตมโคลน", "ห้ามแข่งปีถัดไป", "ให้กราบขอขมาพญาแถน"],
+                correct: 1
+            },
+            {
+                question: "บั้งไฟล้าน บรรจุดินปืนหนักกี่กิโลกรัม?",
+                options: ["120 กิโลกรัม", "500 กิโลกรัม", "1,000 กิโลกรัม", "1,200 กิโลกรัม"],
+                correct: 3
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('question-number').innerText = `ข้อที่ ${currentQuestion + 1} จาก ${quizData.length}`;
+            document.getElementById('quiz-score').innerText = `คะแนน: ${score}`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-stone-700 bg-stone-800/80 hover:bg-stone-700 text-stone-200 transition font-prompt text-base flex justify-between items-center";
+                btn.innerHTML = `<span>${index + 1}. ${opt}</span> <i class="fa-regular fa-circle text-stone-500"></i>`;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(selectedIndex) {
+            const q = quizData[currentQuestion];
+            const buttons = document.getElementById('options-container').children;
+            const feedback = document.getElementById('quiz-feedback');
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                buttons[i].classList.remove('hover:bg-stone-700');
+            }
+
+            if (selectedIndex === q.correct) {
+                score++;
+                buttons[selectedIndex].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-950/40 text-emerald-300 font-prompt text-base flex justify-between items-center";
+                buttons[selectedIndex].innerHTML = `<span>${selectedIndex + 1}. ${q.options[selectedIndex]}</span> <i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+                feedback.className = "mt-6 p-4 rounded-xl bg-emerald-900/30 border border-emerald-500 text-emerald-300 font-prompt";
+                feedback.innerText = "✨ ถูกต้องแล้วครับ!";
+            } else {
+                buttons[selectedIndex].className = "w-full text-left p-4 rounded-xl border-2 border-red-500 bg-red-950/40 text-red-300 font-prompt text-base flex justify-between items-center";
+                buttons[selectedIndex].innerHTML = `<span>${selectedIndex + 1}. ${q.options[selectedIndex]}</span> <i class="fa-solid fa-circle-xmark text-red-400"></i>`;
+                
+                buttons[q.correct].className = "w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-950/20 text-emerald-400 font-prompt text-base flex justify-between items-center";
+                
+                feedback.className = "mt-6 p-4 rounded-xl bg-red-900/30 border border-red-500 text-red-300 font-prompt";
+                feedback.innerText = `❌ ยังไม่ถูกต้อง คำตอบที่ถูกคือ: ${q.options[q.correct]}`;
+            }
+
+            document.getElementById('quiz-score').innerText = `คะแนน: ${score}`;
+            feedback.classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('result-container').classList.remove('hidden');
+            document.getElementById('result-text').innerText = `คุณได้คะแนน ${score} จาก ${quizData.length} คะแนน`;
+            
+            const comment = document.getElementById('result-comment');
+            if (score === quizData.length) {
+                comment.innerText = "ยอดเยี่ยมมาก! คุณคือแฟนพันธุ์แท้ประเพณีบุญบั้งไฟ";
+            } else if (score >= 2) {
+                comment.innerText = "เก่งมาก! คุณมีความรู้เรื่องบุญบั้งไฟในระดับดีทีเดียว";
+            } else {
+                comment.innerText = "ลองอ่านเนื้อหาในหน้าเว็บไซต์อีกครั้ง แล้วลองใหม่นะครับ";
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('result-container').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
